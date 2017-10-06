@@ -14,11 +14,17 @@ class ViewController: UIViewController {
 
     let numberOfPicturesTaken:Int = 10
     let photoDelay:Double = 0.5
+    let buttonSize:CGFloat = 100
+    
+    let camera = Camera()
     
     lazy var button:UIButton = {
         let but = UIButton(type: .system)
-        but.setTitle("Press Me!", for: .normal)
         but.addTarget(self, action: #selector(ViewController.takePicture), for: .touchUpInside)
+        but.backgroundColor = .lightGray
+        but.layer.borderColor = UIColor.black.cgColor
+        but.layer.borderWidth = 2
+        but.layer.masksToBounds = true
         but.translatesAutoresizingMaskIntoConstraints = false
         return but
     }()
@@ -28,8 +34,6 @@ class ViewController: UIViewController {
         view.translatesAutoresizingMaskIntoConstraints = false
         return view
     }()
-    
-    let camera = Camera()
     
     func takePicture() {
         var count = 0
@@ -65,14 +69,15 @@ class ViewController: UIViewController {
         capturePreviewView.rightAnchor.constraint(equalTo: self.view.rightAnchor).isActive = true
         
         button.centerXAnchor.constraint(equalTo: self.view.centerXAnchor).isActive = true
-        button.centerYAnchor.constraint(equalTo: self.view.centerYAnchor).isActive = true
-        button.heightAnchor.constraint(equalToConstant: 50).isActive = true
-        button.widthAnchor.constraint(equalToConstant: 100).isActive = true
+        button.bottomAnchor.constraint(equalTo: self.view.bottomAnchor, constant: -20).isActive = true
+        button.heightAnchor.constraint(equalToConstant: buttonSize).isActive = true
+        button.widthAnchor.constraint(equalToConstant: buttonSize).isActive = true
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
         self.view.backgroundColor = .white
+        button.layer.cornerRadius = buttonSize / 2
         setupSubviews()
         
         func configureCameraController() {
@@ -86,15 +91,7 @@ class ViewController: UIViewController {
         }
         
         configureCameraController()
-        
-        // Do any additional setup after loading the view, typically from a nib.
     }
-
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
-    }
-
 
 }
 

@@ -13,8 +13,6 @@ import AVFoundation
 // Credits for this class: https://www.appcoda.com/avfoundation-swift-guide/
 
 class Camera: NSObject {
-    
-    
     var captureSession: AVCaptureSession?
     var frontCamera: AVCaptureDevice?
     var currentCameraPosition: CameraPosition?
@@ -24,8 +22,10 @@ class Camera: NSObject {
     var previewLayer: AVCaptureVideoPreviewLayer?
     
     var photoCaptureCompletionBlock: ((UIImage?, Error?) -> Void)?
-    
-    
+}
+
+// Camera functions
+extension Camera {
     func prepareCamera(completionHandler: @escaping (Error?) -> Void) {
         func createCaptureSession() {
             self.captureSession = AVCaptureSession()
@@ -109,23 +109,10 @@ class Camera: NSObject {
         self.photoOutput?.capturePhoto(with: settings, delegate: self)
         self.photoCaptureCompletionBlock = completion
     }
-    
-    // enums
-    public enum CameraPosition {
-        case front
-        case rear
-    }
-    
-    enum CameraControllerError: Swift.Error {
-        case captureSessionAlreadyRunning
-        case captureSessionIsMissing
-        case inputsAreInvalid
-        case invalidOperation
-        case noCamerasAvailable
-        case unknown
-    }
+
 }
 
+// Camera inheritances
 extension Camera: AVCapturePhotoCaptureDelegate {
     public func capture(_ captureOutput: AVCapturePhotoOutput, didFinishProcessingPhotoSampleBuffer photoSampleBuffer: CMSampleBuffer?, previewPhotoSampleBuffer: CMSampleBuffer?,
                         resolvedSettings: AVCaptureResolvedPhotoSettings, bracketSettings: AVCaptureBracketedStillImageSettings?, error: Swift.Error?) {
@@ -140,5 +127,22 @@ extension Camera: AVCapturePhotoCaptureDelegate {
         else {
             self.photoCaptureCompletionBlock?(nil, CameraControllerError.unknown)
         }
+    }
+}
+
+// Camera enums
+extension Camera {
+    public enum CameraPosition {
+        case front
+        case rear
+    }
+    
+    enum CameraControllerError: Swift.Error {
+        case captureSessionAlreadyRunning
+        case captureSessionIsMissing
+        case inputsAreInvalid
+        case invalidOperation
+        case noCamerasAvailable
+        case unknown
     }
 }
