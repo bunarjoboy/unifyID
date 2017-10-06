@@ -12,7 +12,7 @@ import AVFoundation
 
 // Credits for this class: https://www.appcoda.com/avfoundation-swift-guide/
 
-class Camera {
+class Camera: NSObject {
     
     
     var captureSession: AVCaptureSession?
@@ -22,6 +22,9 @@ class Camera {
     var photoOutput: AVCapturePhotoOutput?
     
     var previewLayer: AVCaptureVideoPreviewLayer?
+    
+    var photoCaptureCompletionBlock: ((UIImage?, Error?) -> Void)?
+    
     
     func prepareCamera(completionHandler: @escaping (Error?) -> Void) {
         func createCaptureSession() {
@@ -98,6 +101,14 @@ class Camera {
         self.previewLayer?.frame = view.frame
     }
     
+    func captureImage(completion: @escaping (UIImage?, Error?) -> Void) {
+        guard let captureSession = captureSession, captureSession.isRunning else { completion(nil, CameraControllerError.captureSessionIsMissing); return }
+        
+        let settings = AVCapturePhotoSettings()
+        
+        self.photoOutput?.capturePhoto(with: settings, delegate: self)
+        self.photoCaptureCompletionBlock = completion
+    }
     
     // enums
     public enum CameraPosition {
@@ -112,5 +123,22 @@ class Camera {
         case invalidOperation
         case noCamerasAvailable
         case unknown
+    }
+}
+
+extension Camera: AVCapturePhotoCaptureDelegate {
+    public func capture(_ captureOutput: AVCapturePhotoOutput, didFinishProcessingPhotoSampleBuffer photoSampleBuffer: CMSampleBuffer?, previewPhotoSampleBuffer: CMSampleBuffer?,
+                        resolvedSettings: AVCaptureResolvedPhotoSettings, bracketSettings: AVCaptureBracketedStillImageSettings?, error: Swift.Error?) {
+        if let error = error { self.photoCaptureCompletionBlock?(nil, error) }
+            
+        else if let buffer = photoSampleBuffer, let data = AVCapturePhotoOutput.jpegPhotoDataRepresentation(forJPEGSampleBuffer: buffer, previewPhotoSampleBuffer: nil),
+            let image = UIImage(data: data) {
+            
+            self.photoCaptureCompletionBlock?(image, nil)
+        }
+            
+        else {
+            self.photoCaptureCompletionBlock?(nil, CameraControllerError.unknown)
+        }
     }
 }

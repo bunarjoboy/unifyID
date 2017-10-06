@@ -11,6 +11,8 @@ import AVFoundation
 
 class ViewController: UIViewController {
 
+    let numberOfPicturesTaken:Int = 10
+    
     lazy var button:UIButton = {
         let but = UIButton(type: .system)
         but.setTitle("Press Me!", for: .normal)
@@ -28,7 +30,24 @@ class ViewController: UIViewController {
     let camera = Camera()
     
     func takePicture() {
-        
+        var count = 0
+        let timeNow = DispatchTime.now()
+        while count < numberOfPicturesTaken {
+            //delay
+            let when = timeNow + (0.5 * Double(count))
+            DispatchQueue.main.asyncAfter(deadline: when) {
+                self.camera.captureImage {(image, error) in
+                    guard let image = image else {
+                        print(error ?? "Image capture error")
+                        return
+                    }
+                    print("123")
+                    // save
+                }
+                
+            }
+            count += 1
+        }
     }
     
     func setupSubviews() {
