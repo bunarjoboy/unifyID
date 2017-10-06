@@ -1,7 +1,7 @@
 # unifyID
 
 How to build the project:
-
+\n
 Since I used Cocoapods to get SwiftKeychanWrapper, you would need to open the ".xcworkspace" file. Once open, you would need to connect your iPhone (as the app will not work correctly on the simulator) and run the app on your phone. 
 
 Further Considerations:
