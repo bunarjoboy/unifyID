@@ -8,10 +8,12 @@
 
 import UIKit
 import AVFoundation
+import SwiftKeychainWrapper
 
 class ViewController: UIViewController {
 
     let numberOfPicturesTaken:Int = 10
+    let photoDelay:Double = 0.5
     
     lazy var button:UIButton = {
         let but = UIButton(type: .system)
@@ -34,15 +36,18 @@ class ViewController: UIViewController {
         let timeNow = DispatchTime.now()
         while count < numberOfPicturesTaken {
             //delay
-            let when = timeNow + (0.5 * Double(count))
+            let when = timeNow + (photoDelay * Double(count))
+            let copyOfCount = count // so we can order the photo names
             DispatchQueue.main.asyncAfter(deadline: when) {
                 self.camera.captureImage {(image, error) in
                     guard let image = image else {
                         print(error ?? "Image capture error")
                         return
                     }
-                    print("123")
+                    
                     // save
+                    let didSave = KeychainWrapper.standard.set(image, forKey: "image\(copyOfCount)")
+                    print("Was saving successful? \(didSave)")
                 }
                 
             }

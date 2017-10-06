@@ -1,0 +1,6 @@
+framework module Pods_unifyIDUITests {
+  umbrella header "Pods-unifyIDUITests-umbrella.h"
+
+  export *
+  module * { export * }
+}
